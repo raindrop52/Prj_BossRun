@@ -1,0 +1,13 @@
+.vs
+.suo
+
+Library
+Logs
+obj
+UserSettings
+Temp
+
+*.sln
+*.csproj
+*.suo
+.vs/Project_BossRun/v16/.suo
