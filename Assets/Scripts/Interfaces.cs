@@ -12,5 +12,5 @@ public class Interfaces : MonoBehaviour
 
 interface IDamage
 {
-    void Damage(int point);
+    void Damage(float point);
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TPS_CharacterController : MonoBehaviour, IDamage
+public class TPS_CharacterController : MonoBehaviour
 {
     [SerializeField]
     Transform _characterBody;
@@ -27,8 +27,8 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
     Rigidbody _rigid;
 
 
-    Vector3 _moveVec;
-    Vector3 _dodgeVec;
+    [SerializeField] Vector3 _moveVec;
+    [SerializeField] Vector3 _dodgeVec;
     float hAxis;
     float vAxis;
 
@@ -50,12 +50,15 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
         ComboAttack();
     }
 
+    [SerializeField] Vector2 testVec2;
     #region Camera
     void LookAround()
     {
         // 마우스 이동 값
         Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         Vector3 camAngle = _cameraArm.rotation.eulerAngles;
+
+        testVec2 = mouseDelta;
 
         // y축 카메라 각도 제한
         float x = camAngle.x - mouseDelta.y;
@@ -104,10 +107,7 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
                 Dodge();
             }
 
-            Vector3 lookForward = new Vector3(_cameraArm.forward.x, 0f, _cameraArm.forward.z).normalized;
-            Vector3 lookRight = new Vector3(_cameraArm.right.x, 0f, _cameraArm.right.z).normalized;
-            // 바라보고 있는 방향을 기준으로 이동방향 측정
-            _moveVec = lookForward * moveInput.y + lookRight * moveInput.x;
+            _moveVec = GetHeadDir(moveInput.x, moveInput.y);
 
             if (_isDodge)
             {
@@ -115,13 +115,27 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
                 _characterBody.forward = new Vector3(_dodgeVec.x, 0f, _dodgeVec.z);
                 moveSpeed *= 2;
             }
-            else
-                _characterBody.forward = lookForward;
 
             dir = _characterBody.forward;
 
             transform.position += _moveVec * Time.deltaTime * moveSpeed;
         }
+    }
+
+    Vector3 GetHeadDir(float h, float v)
+    {
+        Vector3 dir = Vector3.zero;
+
+        // 정면이동
+        Vector3 lookForward = new Vector3(_cameraArm.forward.x, 0f, _cameraArm.forward.z).normalized;
+        // 측면이동
+        Vector3 lookRight = new Vector3(_cameraArm.right.x, 0f, _cameraArm.right.z).normalized;
+        // 바라보고 있는 방향을 기준으로 이동방향 측정
+        dir = lookForward * v + lookRight * h;
+
+        _characterBody.forward = lookForward;
+
+        return dir;
     }
 
     void Jump()
@@ -155,7 +169,7 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
 
     void Dodge()
     {
-        _dodgeVec = new Vector3(hAxis, 0, vAxis).normalized;
+        _dodgeVec = GetHeadDir(hAxis, vAxis);
         _isDodge = true;
         _anim.OnDadge();
         float time = _anim.GetDodgeTime();
@@ -174,12 +188,6 @@ public class TPS_CharacterController : MonoBehaviour, IDamage
         {
             _anim.OnComboAttack();
         }
-    }
-
-    public void Damage(int hitPoint)
-    {
-        // 체력 감소
-        Debug.Log(hitPoint + "피해를 입음");
     }
     #endregion
 }
