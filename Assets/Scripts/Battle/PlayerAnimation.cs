@@ -4,12 +4,22 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    [SerializeField] GameObject _atkCollision;
+    [SerializeField] PlayerAttackCol _atkCollision;
     Animator _animator;
     
     void Awake()
     {
         _animator = GetComponent<Animator>();
+    }
+
+    public void OnWaitPose()
+    {
+        _animator.SetTrigger("WaitPose");
+    }
+
+    public void OnMovement(bool move)
+    {
+        _animator.SetBool("IsMove", move);
     }
 
     public void OnMovement(float horizontal, float vertical)
@@ -18,14 +28,19 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetFloat("Vertical", vertical);
     }
 
+    public void OnDash(bool dash)
+    {
+        _animator.SetBool("IsDash", dash);
+    }
+
     public void OnJump()
     {
         _animator.SetTrigger("OnJump");
     }
 
-    public void OnDadge()
+    public void OnDodge()
     {
-        _animator.SetTrigger("OnDadge");
+        _animator.SetTrigger("OnDodge");
     }
 
     public void OnComboAttack()
@@ -35,7 +50,7 @@ public class PlayerAnimation : MonoBehaviour
 
     public void OnAttackCollision()
     {
-        _atkCollision.SetActive(true);
+        _atkCollision.Show();
     }
 
     public bool IsMovement()

@@ -171,7 +171,7 @@ public class TPS_CharacterController : MonoBehaviour
     {
         _dodgeVec = GetHeadDir(hAxis, vAxis);
         _isDodge = true;
-        _anim.OnDadge();
+        _anim.OnDodge();
         float time = _anim.GetDodgeTime();
 
         Invoke("DodgeOut", time);

@@ -4,8 +4,15 @@ using UnityEngine;
 public class PlayerAttackCol : MonoBehaviour
 {
     float duration = 0.1f;
+    Collider col;
+    public GameObject goFX;
 
-    private void OnEnable()
+    private void Awake()
+    {
+        col = GetComponent<Collider>();
+    }
+
+    public void Show()
     {
         StartCoroutine(AutoDisable());
     }
@@ -15,6 +22,8 @@ public class PlayerAttackCol : MonoBehaviour
         // Enemy 태그에 충돌한 경우
         if (other.CompareTag("Enemy"))
         {
+            CreateFX(other);
+
             IDamage damage = other.GetComponent<IDamage>();
 
             int hitPoint = 0;
@@ -28,9 +37,24 @@ public class PlayerAttackCol : MonoBehaviour
 
     IEnumerator AutoDisable()
     {
+        OnColEnable(true);
+
         // duration 후에 오브젝트가 사라지도록 함
         yield return new WaitForSeconds(duration);
 
-        gameObject.SetActive(false);
+        OnColEnable(false);
+        //gameObject.SetActive(false);
+    }
+
+    void OnColEnable(bool show)
+    {
+        if (col != null)
+            col.enabled = show;
+    }
+
+    void CreateFX(Collider collider)
+    {
+        GameObject go = Instantiate(goFX);
+        go.transform.position = collider.ClosestPoint(transform.position);
     }
 }
