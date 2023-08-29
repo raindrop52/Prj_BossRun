@@ -41,6 +41,12 @@ public class PlayerController : MonoBehaviour
 
     public float _runOffTime = 3f;      // 달리기 애니메이션 추가모션 발동 최소 시간
 
+    public bool _isCharging = false;
+    public float _chargingTime = 0f;
+    public float _maxChargeTIme = 3f;
+    public GameObject _chargingFx;
+    public GameObject _fullChargFx;
+
     PlayerAnimation _anim;
     Rigidbody _rigid;
 
@@ -50,6 +56,8 @@ public class PlayerController : MonoBehaviour
         _rigid = GetComponent<Rigidbody>();
 
         _state = Player_State.IDLE;
+
+        HideFx(true);
     }
 
     void Update()
@@ -61,17 +69,7 @@ public class PlayerController : MonoBehaviour
         Turn();
         Dodge();
         Attack();
-    }
-
-    public void ChangeState(int tag)
-    {
-        _state = (Player_State)tag;
-    }
-
-    public void ChangeState(Player_State state)
-    {
-        _state = state;
-        Debug.Log(_state + " 변경");
+        Charging();
     }
 
     void GetInput()
@@ -195,5 +193,90 @@ public class PlayerController : MonoBehaviour
             _anim.OnAttack();   // 공격 애니메이션 동작
         }
     }
+
+    void Charging()
+    {
+        // 마우스 우클릭 시 차지
+        if (Input.GetMouseButtonDown(1) && _state == Player_State.IDLE)
+        {
+            _chargingTime = 0f;
+            _anim.OnChargStart();
+            _chargingFx.SetActive(true);
+        }
+
+        if (_state == Player_State.ATTACK)
+        {
+            if (Input.GetMouseButton(1) && _isCharging)
+            {
+                _chargingTime += Time.deltaTime;
+
+                if (_chargingTime >= _maxChargeTIme)
+                {
+                    _chargingTime = _maxChargeTIme;
+                    _chargingFx.SetActive(false);
+                    _fullChargFx.SetActive(true);
+                }
+            }
+            else if (Input.GetMouseButtonUp(1))
+            {
+                StartCoroutine(MinusChargingTime());
+            }
+        }
+    }
+
+    IEnumerator MinusChargingTime()
+    {
+        // 차징 이펙트 숨기기
+        HideFx(true);
+
+        // 차지 시간 세팅
+        _anim.OnCharging(_chargingTime);
+        // 차지 발사
+        _anim.OnChargingFire();
+
+        float timer = _chargingTime;
+
+        while(timer > 0)
+        {
+            timer -= Time.deltaTime;
+            
+            _anim.OnCharging(timer);
+            
+            yield return null;
+        }
+    }
+
+    void HideFx(bool hide)
+    {
+        _chargingFx.SetActive(!hide);
+        _fullChargFx.SetActive(!hide);
+    }
+
+    #region Animation 함수
+    public void ChangeState(int tag)
+    {
+        _state = (Player_State)tag;
+    }
+
+    public void ChangeState(Player_State state)
+    {
+        _state = state;
+    }
+
+    void StartCharging()
+    {
+        if (_state != Player_State.ATTACK)
+            ChangeState(Player_State.ATTACK);
+
+        if (!_isCharging)
+            _isCharging = true;
+    }
+
+    void ChargingOut()
+    {
+        _chargingTime = 0f;
+        _isCharging = false;
+    }
+    #endregion
 }
 

@@ -47,6 +47,21 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetTrigger("OnAttack");
     }
 
+    public void OnChargStart()
+    {
+        _animator.SetTrigger("OnChargeSet");
+    }
+
+    public void OnCharging(float time)
+    {
+        _animator.SetFloat("ChargeTime", time);
+    }
+
+    public void OnChargingFire()
+    {
+        _animator.SetTrigger("OnChargingFire");
+    }
+
     public void OnAttackCollision()
     {
         _atkCollision.Show();

@@ -5,7 +5,7 @@ public class PlayerAttackCol : MonoBehaviour
 {
     float duration = 0.1f;
     Collider col;
-    public GameObject goFX;
+    public GameObject goFx;
 
     private void Awake()
     {
@@ -55,7 +55,7 @@ public class PlayerAttackCol : MonoBehaviour
 
     void CreateFX(Collider collider)
     {
-        GameObject go = Instantiate(goFX);
+        GameObject go = Instantiate(goFx);
         go.transform.position = collider.ClosestPoint(transform.position);
     }
 }
