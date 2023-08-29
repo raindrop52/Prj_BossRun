@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour
     float _vAxis;
 
     public float _waitTime = 3f;
-    float _time;             // 미입력 시간 체크 변수
+    float _time;                        // 키보드 미입력 시간 체크 변수
+    float _runnigTime;                  // 달리기 시간
 
     Vector3 _moveVec;
     Vector3 _dodgeVec;
@@ -28,12 +29,17 @@ public class PlayerController : MonoBehaviour
     bool _isWalk = false;
     bool _isDodge = false;
 
-    bool _modeDash = false;
+    bool _modeRun = false;
     bool _modeDodge = false;
+
+    bool _waitDodge = false;            // 회피 쿨타임 제어 변수
 
     public float _dashSpeedRatio = 1.5f;
     public float _dodgeSpeedRatio = 3f;
     public float _dodgeOutTime = 1f;
+    public float _dodgeCoolTime = 3f;
+
+    public float _runOffTime = 3f;      // 달리기 애니메이션 추가모션 발동 최소 시간
 
     PlayerAnimation _anim;
     Rigidbody _rigid;
@@ -53,7 +59,8 @@ public class PlayerController : MonoBehaviour
         Move();
         Walk();
         Turn();
-        Dodge();        
+        Dodge();
+        Attack();
     }
 
     public void ChangeState(int tag)
@@ -64,6 +71,7 @@ public class PlayerController : MonoBehaviour
     public void ChangeState(Player_State state)
     {
         _state = state;
+        Debug.Log(_state + " 변경");
     }
 
     void GetInput()
@@ -86,40 +94,54 @@ public class PlayerController : MonoBehaviour
 
                 if (_time >= _waitTime)
                 {
-                    _state = Player_State.WAIT;
-                    _anim.OnWaitPose();
+                    ChangeState(Player_State.WAIT);
+                    _anim.OnTired();
                 }
             }
             else
             {
                 _time = 0f;
-                // 대기 상태에서 초기화 하는 것을 방지하기 위함
-                if (_state != Player_State.WAIT)
-                    ChangeState(Player_State.IDLE);
             }
         }
     }
 
     void Move()
     {
+        if (_state == Player_State.ATTACK)
+            return;
+
         _moveVec = new Vector3(_hAxis, 0f, _vAxis).normalized;
         float speed = _speed;
 
-        if (_moveVec != Vector3.zero)
+        if (_moveVec != Vector3.zero)        
             ChangeState(Player_State.MOVE);
-
-        _anim.OnMovement(true);
-
+                
         // 왼쪽 Shift 토글을 통해 달리기,걷기 변환
-        if (_modeDash)
-            speed = _speed * 2;
+        if (_modeRun)
+        {
+            _runnigTime += Time.deltaTime;
+            speed = _speed * 3f;
+        }
+        else
+            _runnigTime = 0f;
 
         if (_modeDodge)
+        {
             _moveVec = _dodgeVec;
+            speed = _speed * _dodgeSpeedRatio;
+        }
 
-        transform.position += _moveVec * _speed * Time.deltaTime;
+        transform.position += _moveVec * speed * Time.deltaTime;
 
         bool isMove = _moveVec != Vector3.zero;
+        if(isMove == false)
+        {
+            if (_runnigTime >= _runOffTime)
+                _anim.OnRunAddMotion();
+
+            _runnigTime = 0f;
+        }
+
         _anim.OnMovement(isMove);
     }
 
@@ -132,29 +154,46 @@ public class PlayerController : MonoBehaviour
     {
         if (_isWalk)
         {
-            _modeDash = !_modeDash;
-            _anim.OnDash(_modeDash);
+            _modeRun = !_modeRun;
+            _anim.OnRun(_modeRun);
         }
     }
 
     void Dodge()
     {
         // 닷지 버튼이 눌리면 동작 (중복 동작 방지)
-        if(_isDodge && !_modeDodge)
+        if(_isDodge && !_modeDodge && !_waitDodge)
         {
+            _waitDodge = true;
             _dodgeVec = _moveVec;
-            _speed *= _dodgeSpeedRatio;
             _anim.OnDodge();
             _modeDodge = true;
 
             Invoke("DodgeOut", _dodgeOutTime);
+            Invoke("DodgeCoolTime", _dodgeCoolTime);
         }
     }
 
     void DodgeOut()
     {
-        _speed *= (1f / _dodgeSpeedRatio);
         _modeDodge = false;
+    }
+
+    void DodgeCoolTime()
+    {
+        _waitDodge = false;
+    }
+
+    void Attack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if(_state != Player_State.ATTACK)
+                ChangeState(Player_State.ATTACK);
+
+            _time = 0f;         // 대기 동작에 진입하지 않도록 초기화
+            _anim.OnAttack();   // 공격 애니메이션 동작
+        }
     }
 }
 

@@ -12,9 +12,9 @@ public class PlayerAnimation : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    public void OnWaitPose()
+    public void OnTired()
     {
-        _animator.SetTrigger("WaitPose");
+        _animator.SetTrigger("OnTired");
     }
 
     public void OnMovement(bool move)
@@ -22,15 +22,9 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetBool("IsMove", move);
     }
 
-    public void OnMovement(float horizontal, float vertical)
+    public void OnRun(bool dash)
     {
-        _animator.SetFloat("Horizontal", horizontal);
-        _animator.SetFloat("Vertical", vertical);
-    }
-
-    public void OnDash(bool dash)
-    {
-        _animator.SetBool("IsDash", dash);
+        _animator.SetBool("IsRun", dash);
     }
 
     public void OnJump()
@@ -43,38 +37,18 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetTrigger("OnDodge");
     }
 
-    public void OnComboAttack()
+    public void OnRunAddMotion()
     {
-        _animator.SetTrigger("OnWeaponAttack");
+        _animator.SetTrigger("OnRunAddMotion");
+    }
+
+    public void OnAttack()
+    {
+        _animator.SetTrigger("OnAttack");
     }
 
     public void OnAttackCollision()
     {
         _atkCollision.Show();
-    }
-
-    public bool IsMovement()
-    {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Movement"))
-        {
-            return true;
-        }
-        
-        return false;
-    }
-
-    public bool IsDodge()
-    {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Dodge"))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public float GetDodgeTime()
-    {
-        return _animator.GetCurrentAnimatorStateInfo(0).length;
     }
 }

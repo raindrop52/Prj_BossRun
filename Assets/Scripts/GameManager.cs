@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public bool _isTutorial = false;
 
     [Header("플레이어")]
+    public Transform _respawnPos;
+    public GameObject _goPlayer;
     public Player _player;
     public bool _alive = true;
         
@@ -25,5 +27,14 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    void CreatePlayer()
+    {
+        if (_player == null)
+        {
+            GameObject go = Instantiate(_goPlayer);
+            go.transform.position = _respawnPos.position;
+        }
     }
 }

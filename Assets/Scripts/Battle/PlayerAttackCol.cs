@@ -10,6 +10,7 @@ public class PlayerAttackCol : MonoBehaviour
     private void Awake()
     {
         col = GetComponent<Collider>();
+        col.enabled = false;
     }
 
     public void Show()
