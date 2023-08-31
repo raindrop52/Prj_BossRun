@@ -3,14 +3,15 @@ using UnityEngine;
 
 public class PlayerAttackCol : MonoBehaviour
 {
-    float duration = 0.1f;
+    public float duration = 0.1f;
     Collider col;
     public GameObject goFx;
+    public TrailRenderer trailFx;
 
     private void Awake()
     {
         col = GetComponent<Collider>();
-        col.enabled = false;
+        OnColEnable(false);
     }
 
     public void Show()
@@ -47,10 +48,18 @@ public class PlayerAttackCol : MonoBehaviour
         //gameObject.SetActive(false);
     }
 
-    void OnColEnable(bool show)
+    public void OnColEnable(bool show)
     {
         if (col != null)
             col.enabled = show;
+
+        ShowTrail(show);
+    }
+
+    void ShowTrail(bool show)
+    {
+        if (trailFx != null)
+            trailFx.enabled = show;
     }
 
     void CreateFX(Collider collider)

@@ -62,8 +62,25 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetTrigger("OnChargingFire");
     }
 
+    public void OnSkill()
+    {
+        _animator.SetTrigger("OnSkill");
+    }
+
+    public void IsGround(bool value)
+    {
+        _animator.SetBool("IsGround", value);
+    }
+
     public void OnAttackCollision()
     {
         _atkCollision.Show();
+    }
+
+    public void OnAttackCollisionShow(int show)
+    {
+        bool value = (show == 1) ? true : false;
+
+        _atkCollision.OnColEnable(value);
     }
 }

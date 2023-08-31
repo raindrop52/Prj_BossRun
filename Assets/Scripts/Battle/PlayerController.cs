@@ -28,11 +28,14 @@ public class PlayerController : MonoBehaviour
 
     bool _isWalk = false;
     bool _isDodge = false;
+    bool _isSkill = false;
 
     bool _modeRun = false;
     bool _modeDodge = false;
 
     bool _waitDodge = false;            // 회피 쿨타임 제어 변수
+
+    public float _atkSpeed = 1f;        // Clamp(0.8 ~ 1.7) 
 
     public float _dashSpeedRatio = 1.5f;
     public float _dodgeSpeedRatio = 3f;
@@ -46,6 +49,17 @@ public class PlayerController : MonoBehaviour
     public float _maxChargeTIme = 3f;
     public GameObject _chargingFx;
     public GameObject _fullChargFx;
+
+    [SerializeField] bool _lockMove;
+    [SerializeField] bool _lockDodge;
+    [SerializeField] bool _lockAttack;
+    [SerializeField] bool _lockCharge;
+    [SerializeField] bool _lockSkill;
+
+    [SerializeField] KeyCode _codeSkill = KeyCode.Q;
+    [SerializeField] float _jumpPower = 5f;
+    [SerializeField] GameObject _groundChecker;
+    [SerializeField] float _rayDist = 0.165f;
 
     PlayerAnimation _anim;
     Rigidbody _rigid;
@@ -64,12 +78,18 @@ public class PlayerController : MonoBehaviour
     {
         GetInput();
         Wait();
-        Move();
-        Walk();
+        WalkRun();
+        if(!_lockMove)
+            Move();
         Turn();
-        Dodge();
-        Attack();
-        Charging();
+        if(!_lockDodge)
+            Dodge();
+        if(!_lockAttack)
+            Attack();
+        if(!_lockCharge)
+            Charging();
+        if (!_lockSkill)
+            UseSkill();
     }
 
     void GetInput()
@@ -118,7 +138,7 @@ public class PlayerController : MonoBehaviour
         if (_modeRun)
         {
             _runnigTime += Time.deltaTime;
-            speed = _speed * 3f;
+            speed = _speed * _dashSpeedRatio;
         }
         else
             _runnigTime = 0f;
@@ -148,7 +168,7 @@ public class PlayerController : MonoBehaviour
         transform.LookAt(transform.position + _moveVec);
     }
 
-    void Walk()
+    void WalkRun()
     {
         if (_isWalk)
         {
@@ -186,8 +206,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if(_state != Player_State.ATTACK)
-                ChangeState(Player_State.ATTACK);
+            AttackState();
 
             _time = 0f;         // 대기 동작에 진입하지 않도록 초기화
             _anim.OnAttack();   // 공격 애니메이션 동작
@@ -252,6 +271,42 @@ public class PlayerController : MonoBehaviour
         _fullChargFx.SetActive(!hide);
     }
 
+    void UseSkill()
+    {
+        if (Input.GetKeyDown(_codeSkill) && !_isSkill)
+        {
+            AttackState();
+            _isSkill = true;
+            _anim.OnSkill();
+        }
+    }
+
+    IEnumerator CheckGround()
+    {
+        if(_groundChecker != null)
+        {
+            _anim.IsGround(false);
+            int mask = 1 << LayerMask.NameToLayer("Ground");
+            RaycastHit hit;
+
+            yield return new WaitForSeconds(0.1f);
+
+            while(true)
+            {
+                Debug.DrawRay(_groundChecker.transform.position, Vector3.down * _rayDist, Color.red);
+                if (Physics.Raycast(_groundChecker.transform.position, Vector3.down, out hit, _rayDist, mask))
+                {
+                    _anim.IsGround(true);
+                    break;
+                }
+
+                yield return null;
+            }
+        }
+
+        yield return null;
+    }
+
     #region Animation 함수
     public void ChangeState(int tag)
     {
@@ -263,10 +318,15 @@ public class PlayerController : MonoBehaviour
         _state = state;
     }
 
-    void StartCharging()
+    void AttackState()
     {
         if (_state != Player_State.ATTACK)
             ChangeState(Player_State.ATTACK);
+    }
+
+    void StartCharging()
+    {
+        AttackState();
 
         if (!_isCharging)
             _isCharging = true;
@@ -276,6 +336,17 @@ public class PlayerController : MonoBehaviour
     {
         _chargingTime = 0f;
         _isCharging = false;
+    }
+
+    void SkillJump()
+    {
+        _rigid.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
+        StartCoroutine(CheckGround());
+    }
+
+    void SkillOut()
+    {
+        _isSkill = false;
     }
     #endregion
 }
