@@ -6,6 +6,7 @@ public class PlayerAttackCol : MonoBehaviour
     public float duration = 0.1f;
     Collider col;
     public GameObject goFx;
+    public GameObject groundHitFx;
     public TrailRenderer trailFx;
 
     private void Awake()

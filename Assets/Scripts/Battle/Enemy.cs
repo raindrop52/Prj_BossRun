@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour, IDamage
         if (UIManager.i != null)
         {
             float ratio = _hp / _hpMax;
-            UIManager.i.ChangeHP((int)HPBar_Type.HP_Boss, ratio);
+            UIManager.i.ChangeHP((int)Bar_Type.HP_Boss, ratio);
         }
     }
 }

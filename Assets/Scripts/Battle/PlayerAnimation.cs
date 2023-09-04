@@ -22,9 +22,9 @@ public class PlayerAnimation : MonoBehaviour
         _animator.SetBool("IsMove", move);
     }
 
-    public void OnRun(bool dash)
+    public void OnWalk(bool value)
     {
-        _animator.SetBool("IsRun", dash);
+        _animator.SetBool("IsWalk", value);
     }
 
     public void OnJump()

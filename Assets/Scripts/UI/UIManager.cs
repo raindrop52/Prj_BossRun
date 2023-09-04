@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public  enum HPBar_Type
+public  enum Bar_Type
 {
-    HP_Plyaer,
+    HP_Player,
     HP_Boss
 }
 
@@ -14,7 +14,11 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager i;
     [SerializeField] // 0 : Player, 1 : Boss
-    List<HpBar> _hpBars;
+    List<Bar> _hpBars;
+    [SerializeField]
+    Bar _stBar;
+    [SerializeField]
+    Bar _skBar;
     [Header("튜토리얼")]
     [SerializeField]
     GameObject _goTutorial;    // 전반적인 튜토리얼 게임 오브젝트 (표시, 비표시 용)
@@ -27,11 +31,14 @@ public class UIManager : MonoBehaviour
     {
         i = this;
 
-        // 체력바 최대치로 충전
-        foreach(HpBar bar in _hpBars)
+        // 체력바 최대치로 충전 (아군, 적)
+        foreach(Bar bar in _hpBars)
         {
-            bar.SetHpBar(1.0f);
+            bar.SetBar(1.0f);
         }
+
+        _stBar.SetBar(1.0f);
+        _skBar.SetBar(0f);
     }
 
     void Update()
@@ -46,7 +53,17 @@ public class UIManager : MonoBehaviour
 
     public void ChangeHP(int index, float ratio)
     {
-        _hpBars[index].SetHpBar(ratio);
+        _hpBars[index].SetBar(ratio);
+    }
+
+    public void ChangeST(float ratio)
+    {
+        _stBar.SetBar(ratio);
+    }
+
+    public void ChangeSK(float ratio)
+    {
+        _skBar.SetBar(ratio);
     }
 
     public void ChangeText_Tutorial(string text)
