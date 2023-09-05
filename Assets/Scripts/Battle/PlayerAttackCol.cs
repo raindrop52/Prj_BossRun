@@ -28,10 +28,15 @@ public class PlayerAttackCol : MonoBehaviour
             CreateFX(other);
 
             IDamage damage = other.GetComponent<IDamage>();
-
+            
             int hitPoint = 0;
             if (GameManager.i != null)
+            {
+                // 플레이어의 공격력 가져옴
                 hitPoint = GameManager.i._player.AtkPoint;
+                // 스킬 게이지 생성
+                GameManager.i._player.CreateSKGague(other.transform);
+            }
 
             if (damage != null)
                 damage.Damage(hitPoint);

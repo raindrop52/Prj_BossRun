@@ -3262,6 +3262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d3676f434b654aa8c82a1847a91bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 0
 --- !u!114 &940001865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3599,6 +3600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d3676f434b654aa8c82a1847a91bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 0
 --- !u!114 &1352188200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4122,6 +4124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d3676f434b654aa8c82a1847a91bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 0
 --- !u!114 &1523532349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4249,6 +4252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3d3676f434b654aa8c82a1847a91bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 1
 --- !u!1 &1829363449
 GameObject:
   m_ObjectHideFlags: 0
@@ -50876,14 +50880,14 @@ GameObject:
   - component: {fileID: 7447414573601517975}
   - component: {fileID: 3583357650679114733}
   - component: {fileID: 6976130135851067851}
-  - component: {fileID: 7787102761356995376}
   - component: {fileID: 7787102761356995375}
+  - component: {fileID: 7787102761356995376}
   - component: {fileID: 7787102761356995379}
   - component: {fileID: 7787102761356995378}
   - component: {fileID: 7787102761356995377}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50918,13 +50922,15 @@ MonoBehaviour:
   _hpMax: 100
   _st: 0
   _stMax: 100
-  _stPerSec: 5
-  _stAtk: 5
-  _stDodge: 20
-  _stCharge: 10
-  _stChargingSec: 20
-  _skGague: 0
-  _skGet: 5
+  stPerSec: 5
+  stAtk: 5
+  stDodge: 20
+  stCharge: 10
+  stChargingSec: 20
+  _skGague: 95
+  createOffset: 1
+  goGague: {fileID: 6217068120776280421, guid: 55bffe83ef1d4024e95bcc79f9cca228, type: 3}
+  gagueCoolTime: 2
 --- !u!136 &7787102761356995377
 CapsuleCollider:
   m_ObjectHideFlags: 0

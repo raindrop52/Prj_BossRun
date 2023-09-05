@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
     {
         _goTutorial.SetActive(show);
     }
-
+    
     public void ChangeHP(int index, float ratio)
     {
         _hpBars[index].SetBar(ratio);

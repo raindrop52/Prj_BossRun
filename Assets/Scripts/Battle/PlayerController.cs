@@ -345,9 +345,13 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(_codeSkill) && !_isSkill)
         {
-            AttackState();
-            _isSkill = true;
-            _anim.OnSkill();
+            if (player.UseSKGague())
+            {
+                AttackState();
+
+                _isSkill = true;
+                _anim.OnSkill();
+            }
         }
     }
 
