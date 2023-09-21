@@ -15,4 +15,29 @@ public class EnemyAnimation : MonoBehaviour
     {
         _anim.SetTrigger("OnHit");
     }
+
+    public void OnSkill1()
+    {
+        _anim.SetTrigger("OnSkill1");
+    }
+
+    public void OnSkill2()
+    {
+        _anim.SetTrigger("OnSkill2");
+    }
+
+    public void OnAttack()
+    {
+        _anim.SetTrigger("OnAttack");
+    }
+
+    public void IsWalk(bool value)
+    {
+        _anim.SetBool("IsWalk", value);
+    }
+
+    public void IsStun(bool value)
+    {
+        _anim.SetBool("IsStun", value);
+    }
 }

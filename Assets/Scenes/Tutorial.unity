@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.25756097, g: 0.6900146, b: 0.819132, a: 1}
+  m_IndirectSpecularColor: {r: 0.25733137, g: 0.6898885, b: 0.8191011, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 241a65075fbc43142af68b29b4cc3fc1, type: 2}
 --- !u!1 &216741231
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,7 +380,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &279590886
 MeshCollider:
@@ -1068,6 +1068,7 @@ GameObject:
   - component: {fileID: 312481945}
   - component: {fileID: 312481944}
   - component: {fileID: 312481946}
+  - component: {fileID: 312481947}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -2353,6 +2354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05efe56b815b3f741971a1a3fa56e11c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 2
 --- !u!114 &312481945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2377,9 +2379,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444629d5e8b4eac49a46e3860bfbf23b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _state: 0
   _hp: 0
   _hpMax: 100
   _hitTime: 0.1
+  _searchRad: 7
+  _target: {fileID: 0}
+  _coolAtk: 3
+  _coolSkill1: 5
+  _coolSkill2: 10
+--- !u!195 &312481947
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305228580}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!137 &316794450
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -2917,7 +2947,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &648230076
 MeshCollider:
@@ -3516,7 +3546,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &896047204
 MeshCollider:
@@ -3704,7 +3734,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &1009782468
 MeshCollider:
@@ -3939,7 +3969,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1117334711
 Transform:
