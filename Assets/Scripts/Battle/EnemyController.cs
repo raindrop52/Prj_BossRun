@@ -15,11 +15,11 @@ public class EnemyController : MonoBehaviour
             _originColor = _meshRender.material.color;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position, 7f);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawSphere(transform.position, 7f);
+    //}
 
     public void FindTargetRot(Transform target)
     {

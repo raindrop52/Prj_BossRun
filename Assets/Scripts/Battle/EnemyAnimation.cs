@@ -40,4 +40,15 @@ public class EnemyAnimation : MonoBehaviour
     {
         _anim.SetBool("IsStun", value);
     }
+
+    public void PauseAnim(float time)
+    {
+        _anim.speed = 0f;
+        Invoke("PlayAnim", time);
+    }
+
+    void PlayAnim()
+    {
+        _anim.speed = 1f;
+    }
 }

@@ -32,6 +32,14 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] float _coolSkill1 = 0f;
     [SerializeField] float _coolSkill2 = 0f;
 
+    [Header("스킬")]
+    [SerializeField] Fx_Skill1 _skill1;
+
+    [SerializeField] GameObject rangeSkill1;
+    [SerializeField] GameObject rangeSkill2;
+    GameObject _rangeSkill1;
+    GameObject _rangeSkill2;
+
     void Awake()
     {
         _anim = GetComponent<EnemyAnimation>();
@@ -39,6 +47,9 @@ public class Enemy : MonoBehaviour, IDamage
 
         _hp = _hpMax;
         ChangeHP();
+
+        // 스킬 공격 범위
+        CreateRange();
 
         StartCoroutine(Enemy_AI());
     }
@@ -156,6 +167,16 @@ public class Enemy : MonoBehaviour, IDamage
         }
     }
 
+    public void ShowRangeSkill1(bool show)
+    {
+        _rangeSkill1.SetActive(show);
+    }
+
+    public void ShowRangeSkill2(bool show)
+    {
+        _rangeSkill2.SetActive(show);
+    }
+
     // IDamage Interface 구현
     public void Damage(float hitPoint)
     {
@@ -248,10 +269,52 @@ public class Enemy : MonoBehaviour, IDamage
             return false;
     }
 
+    void CreateRange()
+    {
+        if (rangeSkill1 != null)
+        {
+            GameObject go = Instantiate(rangeSkill1);
+            go.transform.SetParent(transform);
+            go.transform.localPosition = Vector3.zero;
+            go.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
+            go.SetActive(false);
+            _rangeSkill1 = go;
+        }
+
+        if (rangeSkill2 != null)
+        {
+            GameObject go = Instantiate(rangeSkill2);
+            go.transform.SetParent(transform);
+            go.transform.position = Vector3.zero;
+            go.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
+            go.SetActive(false);
+            _rangeSkill2 = go;
+        }
+    }
+
     #region Animation Script
     public void OffSkill()
     {
         _state = Enemy_State.IDLE;
+    }
+
+    public void Skill1_Range(int value = 0)
+    {
+        bool show = false;
+
+        if (value == 1)
+            show = true;
+
+        ShowRangeSkill1(show);
+    }
+
+    public void Skill1_Fire()
+    {
+        _anim.PauseAnim(0.75f);
+        // 범위 없애줌
+        Skill1_Range();
+        // 이펙트 표시
+        _skill1.Play();
     }
     #endregion
 }
