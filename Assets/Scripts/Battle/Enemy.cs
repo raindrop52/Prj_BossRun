@@ -4,11 +4,14 @@ using UnityEngine;
 
 public enum Enemy_State
 {
+    READY = 0,
     IDLE,
     WALK,
     ATTACK,
     SKILL1,
     SKILL2,
+    WAIT,
+    DIE
 }
 
 public class Enemy : MonoBehaviour, IDamage
@@ -52,7 +55,7 @@ public class Enemy : MonoBehaviour, IDamage
 
             switch (_state)
             {
-                case Enemy_State.IDLE:
+                case Enemy_State.READY:
                     {
                         // 타겟 확인 시
                         if (_target != null)
@@ -60,11 +63,15 @@ public class Enemy : MonoBehaviour, IDamage
                             // 걷기 진입
                             _state = Enemy_State.WALK;
                             _anim.IsWalk(true);
-                            _enemyController.OnSpeed(true);
                         }
                         // 타겟 미확인 시
                         else
                             SearchPlayer();
+                        break;
+                    }
+                case Enemy_State.IDLE:
+                    {
+                        _state = Enemy_State.WALK;
                         break;
                     }
                 case Enemy_State.WALK:
@@ -74,21 +81,41 @@ public class Enemy : MonoBehaviour, IDamage
                     }
                 case Enemy_State.ATTACK:
                     {
+                        // 공격 쿨타임 체크
                         if (Attack(coolAtk))
+                            // 쿨타임 초기화
                             coolAtk = _coolAtk;
 
                         break;
                     }
                 case Enemy_State.SKILL1:
                     {
+                        // 대기 상태 전환
+                        _state = Enemy_State.WAIT;
+                        // 타겟 방향 보기
+                        _enemyController.FindTargetRot(_target);
+                        // 쿨타임 초기화
                         coolSkill1 = _coolSkill1;
-                        Skill1();
+                        // 스킬 사용
+                        _anim.OnSkill1();
+                        Debug.Log("Skill1");
                         break;
                     }
                 case Enemy_State.SKILL2:
                     {
+                        // 대기 상태 전환
+                        _state = Enemy_State.WAIT;
+                        // 타겟 방향 보기
+                        _enemyController.FindTargetRot(_target);
+                        // 쿨타임 초기화
                         coolSkill2 = _coolSkill2;
-                        Skill2();
+                        // 스킬 사용
+                        _anim.OnSkill2();
+                        Debug.Log("Skill2");
+                        break;
+                    }
+                case Enemy_State.WAIT:
+                    {
                         break;
                     }
             }
@@ -103,6 +130,7 @@ public class Enemy : MonoBehaviour, IDamage
                 _state = Enemy_State.SKILL2;
             }
 
+            // 쿨타임 처리부
             if (coolAtk > 0f)
             {
                 coolAtk -= Time.deltaTime;
@@ -171,11 +199,10 @@ public class Enemy : MonoBehaviour, IDamage
         float dist = Vector3.Distance(transform.position, _target.position);
         if (dist <= 2f)
         {
-            _enemyController.OnSpeed(false);
             _anim.IsWalk(false);
             _state = Enemy_State.ATTACK;
         }
-        
+
         _enemyController.FollowTarget(_target);
     }
 
@@ -183,15 +210,10 @@ public class Enemy : MonoBehaviour, IDamage
 
     bool Attack(float cooltime)
     {
-        float dsX = transform.position.x - _target.position.x;
-        float dsZ = transform.position.z - _target.position.z;
-        float dsXZ = Mathf.Sqrt(Mathf.Pow(dsX, 2) * Mathf.Pow(dsZ, 2));
-        test = new Vector3(dsX, dsXZ, dsZ);
         float dist = Vector3.Distance(transform.position, _target.position);
         if (dist > 2f)
         {
             _state = Enemy_State.WALK;
-            _enemyController.OnSpeed(true);
             _anim.IsWalk(true);
             Debug.Log("추적");
             return false;
@@ -199,26 +221,13 @@ public class Enemy : MonoBehaviour, IDamage
 
         if(cooltime <= 0f)
         {
+            _enemyController.FindTargetRot(_target);
             _anim.OnAttack();
             Debug.Log("공격");
             return true;
         }
 
         return false;
-    }
-
-    void Skill1()
-    {
-        _enemyController.OnSpeed(false);
-        _anim.OnSkill1();
-        _enemyController.OnSpeed(true);
-    }
-
-    void Skill2()
-    {
-        _enemyController.OnSpeed(false);
-        _anim.OnSkill2();
-        _enemyController.OnSpeed(true);
     }
 
     // state 값이 현재 상태와 같으면 true 다르다면 false

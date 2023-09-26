@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
     SkinnedMeshRenderer _meshRender;
     Color               _originColor;
-    NavMeshAgent agent;
     [SerializeField] float speed = 0f;
 
     void Awake()
@@ -15,8 +13,6 @@ public class EnemyController : MonoBehaviour
         _meshRender = GetComponentInChildren<SkinnedMeshRenderer>();
         if(_meshRender != null)
             _originColor = _meshRender.material.color;
-
-        agent = GetComponent<NavMeshAgent>();
     }
 
     private void OnDrawGizmos()
@@ -25,17 +21,20 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawSphere(transform.position, 7f);
     }
 
-    public void OnSpeed(bool on)
+    public void FindTargetRot(Transform target)
     {
-        if (on)
-            agent.speed = speed;
-        else
-            agent.speed = 0f;
+        // πÊ«‚ ∫§≈Õ = ∏Ò«• ∫§≈Õ - Ω√¿€ ∫§≈Õ
+        Vector3 dir = target.position - transform.position;
+        dir = new Vector3(dir.x, 0f, dir.z);
+        Quaternion rot = Quaternion.LookRotation(dir.normalized);
+        transform.rotation = rot;
     }
 
     public void FollowTarget(Transform target)
     {
-        agent.SetDestination(target.position);
+        FindTargetRot(target);
+        
+        transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
     }
 
     public void HitEvent(float time)
